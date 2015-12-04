@@ -18,8 +18,8 @@ LOCAL_PATH=${LOCAL_PATH:?'You need to configure the LOCAL_PATH environment varia
 # Fail the deployment on the first error
 set -e
 
-# install the AWS CLI, which isn't installed by default
-pip install awscli
+# install the AWS CLI, if isn't installed by default
+# sudo pip install awscli
 
 # Declare associative array of extra command line arguments for aws
 # Supported only on bash v4
