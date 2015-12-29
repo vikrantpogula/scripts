@@ -9,6 +9,13 @@
 #
 # Include in your builds via
 # \curl -sSL https://raw.githubusercontent.com/codeship/scripts/master/deployments/aws_s3.sh | bash -s
+
+# Install AWS-CLI Latest without sudo. (bundled installer - http://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+unzip awscli-bundle.zip
+./awscli-bundle/install -b ~/bin/aws
+rm -rf awscli-bundle
+
 AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?'You need to configure the AWS_ACCESS_KEY_ID environment variable!'}
 AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?'You need to configure the AWS_SECRET_ACCESS_KEY environment variable!'}
 AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:?'You need to configure the AWS_DEFAULT_REGION environment variable!'}
