@@ -44,22 +44,33 @@ AWS_S3_EXTRA_ARGS["acl"]=${AWS_S3_ACL} # Sets ACL
 
 
 # Base command to be executed
-BASE_COMMAND="aws s3 sync ${LOCAL_PATH} s3://${AWS_S3_BUCKET}/"
+COMMAND1="aws s3 cp --recursive ${LOCAL_PATH} s3://${AWS_S3_BUCKET}/ --exclude=cache.appcache --exclude=index.html"
+COMMAND2="aws s3 cp ${LOCAL_PATH}/cache.appcache s3://${AWS_S3_BUCKET}/"
+COMMAND3="aws s3 cp ${LOCAL_PATH}/index.html s3://${AWS_S3_BUCKET}/"
+BASE_COMMANDS=("${COMMAND1}" "${COMMAND2}" "${COMMAND3}")
 
 # Build command with arguments that are provided and not empty
-for key in "${!AWS_S3_EXTRA_ARGS[@]}"
+COMMAND_SET=()
+for BASE_COMMAND in "${BASE_COMMANDS[@]}"
 do
-  if [ -n "${AWS_S3_EXTRA_ARGS[$key]}" ]; then # Checks if not empty
-    echo "Detected AWS_S3 Argument: $key=\"${AWS_S3_EXTRA_ARGS[$key]}\""
-    BASE_COMMAND+=" --$key=\"${AWS_S3_EXTRA_ARGS[$key]}\""
-  fi
+	for key in "${!AWS_S3_EXTRA_ARGS[@]}"
+	do
+	  if [ -n "${AWS_S3_EXTRA_ARGS[$key]}" ]; then # Checks if not empty
+	    echo "Detected AWS_S3 Argument: $key=\"${AWS_S3_EXTRA_ARGS[$key]}\""
+		    BASE_COMMAND+=" --$key=\"${AWS_S3_EXTRA_ARGS[$key]}\""
+	  fi
+	done
+	COMMAND_SET+=("${BASE_COMMAND}")
 done
 
 # Example Result
 # LOCAL_PATH="build"
 # AWS_S3_BUCKET="xyz"
 # AWS_S3_CACHE_CONTROL="no-cache"
-# aws s3 sync build s3://xyz/ --cache-control="no-cache"
+# aws s3 cp build s3://xyz/ --cache-control="no-cache"
 
 # Is eval unsafe ?
-eval $BASE_COMMAND
+for BASE_COMMAND in "${COMMAND_SET[@]}"
+do
+	eval $BASE_COMMAND
+done
