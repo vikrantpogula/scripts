@@ -44,9 +44,11 @@ AWS_S3_EXTRA_ARGS["acl"]=${AWS_S3_ACL} # Sets ACL
 
 
 # Base command to be executed
+CACHE_FILE="cache.appcache"
+INDEX_FILE="index.html"
 COMMAND1="aws s3 cp --recursive ${LOCAL_PATH} s3://${AWS_S3_BUCKET}/ --exclude=cache.appcache --exclude=index.html"
-COMMAND2="aws s3 cp ${LOCAL_PATH}/cache.appcache s3://${AWS_S3_BUCKET}/"
-COMMAND3="aws s3 cp ${LOCAL_PATH}/index.html s3://${AWS_S3_BUCKET}/"
+COMMAND2="aws s3 cp ${LOCAL_PATH}/${CACHE_FILE} s3://${AWS_S3_BUCKET}/"
+COMMAND3="aws s3 cp ${LOCAL_PATH}/${INDEX_FILE} s3://${AWS_S3_BUCKET}/"
 BASE_COMMANDS=("${COMMAND1}" "${COMMAND2}" "${COMMAND3}")
 
 # Build command with arguments that are provided and not empty
@@ -72,5 +74,5 @@ done
 # Is eval unsafe ?
 for BASE_COMMAND in "${COMMAND_SET[@]}"
 do
-	eval $BASE_COMMAND
+	eval $BASE_COMMAND || echo "Upload failed."
 done
